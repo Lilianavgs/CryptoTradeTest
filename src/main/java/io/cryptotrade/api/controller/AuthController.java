@@ -10,10 +10,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,7 +40,6 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         return userService.authenticate(request.getEmail(), request.getPassword())
                 .map(user -> {
-
                     // Verificar si ya existe una sesión activa para el usuario
                     List<Session> sesionesActivas = sessionService.getActiveSessionsByUser(user.getId());
                     if (!sesionesActivas.isEmpty()) {
@@ -46,17 +48,37 @@ public class AuthController {
                                 .body("El usuario ya tiene una sesión activa.");
                     }
 
-                    String token = jwtUtils.generateToken(user.getId());
-
                     // Obtener IP del cliente
                     String ipAddress = httpRequest.getRemoteAddr();
 
-                    // Crear registro de sesión
-                    sessionService.createSession(user.getId(), ipAddress);
+                    // Crear registro de sesión y obtener el objeto Session con su ID
+                    Session session;
+                    session = sessionService.createSession(user.getId(), ipAddress);
+
+                    // Generar token JWT con userId y sessionId
+                    String token = jwtUtils.generateToken(user.getId(), session.getId().toString());
 
                     return ResponseEntity.ok(new AuthResponse(token));
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());//401 UNAUTHORIZED
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()); // 401 UNAUTHORIZED
+    }
+
+
+    @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body("Token no proporcionado");
+        }
+        String token = authHeader.substring(7);
+
+        String sessionIdStr = jwtUtils.extractSessionIdFromToken(token);
+        if (sessionIdStr == null) {
+            return ResponseEntity.badRequest().body("Sesión no encontrada");
+        }
+        sessionService.deactivateSessionById(sessionIdStr);
+        return ResponseEntity.ok("Sesión cerrada correctamente");
     }
 
     @Data

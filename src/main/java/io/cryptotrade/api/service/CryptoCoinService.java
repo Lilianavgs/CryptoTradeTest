@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +37,17 @@ public class CryptoCoinService {
         Set<Currency> currencies = currencySymbols.stream()
                 .map(currencyService::findBySymbol)
                 .filter(c -> c != null)
-                .collect(java.util.stream.Collectors.toSet());
+                .collect(Collectors.toSet());
+
         cryptoCoin.setCurrencies(currencies);
         CryptoCoin savedCryptoCoin = cryptoCoinRepository.save(cryptoCoin);
+
         transactionLogger.info("Nueva criptomoneda creada: id={}, symbol={}, name={}, monedas asociadas={}",
                 savedCryptoCoin.getId(),
                 savedCryptoCoin.getSymbol(),
                 savedCryptoCoin.getName(),
                 currencies.stream().map(Currency::getSymbol).toList());
+
         return savedCryptoCoin;
     }
 
@@ -63,4 +67,15 @@ public class CryptoCoinService {
             return null;
         });
     }
+
+    public CryptoCoin findBySymbolOrName(String symbol, String name) {
+        CryptoCoin cryptoCoin = cryptoCoinRepository.findBySymbolOrName(symbol, name).orElse(null);
+        if (cryptoCoin != null) {
+            transactionLogger.info("Cripto Moneda encontrada por símbolo '{}' o nombre '{}': id={}", symbol,name, cryptoCoin.getId());
+        } else {
+            transactionLogger.warn("No se encontró Cripto moneda con símbolo '{}' o nombre '{}'", symbol,name);
+        }
+        return cryptoCoin;
+    }
+
 }

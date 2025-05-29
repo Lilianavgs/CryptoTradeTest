@@ -22,9 +22,10 @@ public class JwtUtils {
         this.jwtExpirationMs = jwtExpirationMs;
     }
 
-    public String generateToken(Integer userId) {
+    public String generateToken(Integer userId, String sessionId) {
         return Jwts.builder()
                 .setSubject(userId.toString())
+                .claim("sessionId", sessionId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(key)
@@ -39,11 +40,33 @@ public class JwtUtils {
                 .getBody();
         return Integer.parseInt(claims.getSubject());
     }
+    public String extractSessionIdFromToken(String token) {
+        System.out.println(token);
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            System.out.println(claims.get("sessionId", String.class));
+            return claims.get("sessionId", String.class);
+
+        } catch (ExpiredJwtException e) {
+            // Token expirado: aún podemos obtener los claims desde la excepción
+            return e.getClaims().get("sessionId", String.class);
+        } catch (JwtException e) {
+            log.error("Error al extraer sessionId del token JWT: {}", e.getMessage());
+            return null;
+        }
+    }
 
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException ex) {
+            extractSessionIdFromToken(token);
         } catch (JwtException e) {
             log.error("Token JWT inválido: {}", e.getMessage());
         }

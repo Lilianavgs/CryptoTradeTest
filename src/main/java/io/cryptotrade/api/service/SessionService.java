@@ -2,13 +2,15 @@ package io.cryptotrade.api.service;
 
 import io.cryptotrade.api.model.Session;
 import io.cryptotrade.api.repository.SessionRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,52 +19,71 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SessionService {
 
-    private static final Logger authLogger = LoggerFactory.getLogger("io.cryptotrade.api.auth");
-
     private final SessionRepository sessionRepository;
+    private static final Logger sessionLogger =
+            LoggerFactory.getLogger("io.cryptotrade.api.auth");
 
     public Session createSession(Integer userId, String ipAddress) {
+        // Validar que ipAddress no sea nulo ni vacío, si quieres puedes hacer alguna validación extra aquí
+        if (ipAddress != null && ipAddress.isBlank()) {
+            ipAddress = null; // Convertir cadenas vacías a null para evitar almacenar valores inválidos
+        }
+
+        Instant now = Instant.now();
+
         Session session = Session.builder()
                 .userId(userId)
-                .ipAddress(ipAddress)
-                .sessionStart(Instant.now())
-                .lastActivity(Instant.now())
+                .ipAddress(ipAddress)  // Ahora ipAddress es String directamente
+                .sessionStart(now)
+                .lastActivity(now)
                 .isActive(true)
                 .build();
-        Session savedSession = sessionRepository.save(session);
-        authLogger.info("Nueva sesión creada: userId={}, sessionId={}, ipAddress={}", userId, savedSession.getId(), ipAddress);
-        return savedSession;
+
+        try {
+            Session savedSession = sessionRepository.save(session);
+            sessionLogger.info("Sesión creada para usuario {} con ID de sesión {}", userId, savedSession.getId());
+            return savedSession;
+        } catch (Exception e) {
+            sessionLogger.error("Error al crear sesión", e);
+        }
+        return null;
     }
 
     public void updateLastActivity(UUID sessionId) {
-        sessionRepository.findById(sessionId).ifPresent(session -> {
-            session.setLastActivity(Instant.now());
-            sessionRepository.save(session);
-            authLogger.info("Actualizada última actividad: sessionId={}", sessionId);
-        });
+        try {
+            sessionRepository.findById(sessionId).ifPresentOrElse(session -> {
+                session.setLastActivity(Instant.now());
+                sessionRepository.save(session);
+                sessionLogger.info("Última actividad actualizada para sesión con ID {}", sessionId);
+            }, () -> {
+                sessionLogger.warn("No se encontró sesión con ID {}", sessionId);
+            });
+        } catch (Exception e) {
+            sessionLogger.error("Error al actualizar última actividad para sesión con ID {}: {}", sessionId, e.getMessage(), e);
+        }
     }
 
     public void deactivateSessionById(String sessionIdStr) {
         try {
             UUID sessionId = UUID.fromString(sessionIdStr);
             Optional<Session> sessionOpt = sessionRepository.findById(sessionId);
-            if (sessionOpt.isPresent()) {
-                Session session = sessionOpt.get();
+            sessionOpt.ifPresent(session -> {
                 session.setActive(false);
                 sessionRepository.save(session);
-                authLogger.info("Sesión desactivada: sessionId={}", sessionId);
-            } else {
-                authLogger.warn("Intento de desactivar sesión no encontrada: sessionId={}", sessionId);
-            }
-        } catch (IllegalArgumentException e) {
-            authLogger.error("Formato inválido de sessionId para desactivar sesión: {}", sessionIdStr, e);
+            });
+            sessionLogger.info("Se ha cerrado la sesión");
+        } catch (Exception e) {
+            sessionLogger.error("Error al cerrar sesión");
         }
     }
 
-    // Opcional: obtener sesiones activas de un usuario
     public List<Session> getActiveSessionsByUser(Integer userId) {
-        List<Session> sessions = sessionRepository.findByUserIdAndIsActive(userId, true);
-        authLogger.info("Sesiones activas obtenidas para userId={}, count={}", userId, sessions.size());
-        return sessions;
+        try {
+            return sessionRepository.findByUserIdAndIsActive(userId, true);
+        } catch (Exception e) {
+            sessionLogger.error("Error al obtener sesiones activas para el usuario", e);
+            // Retornar lista vacía para evitar null y facilitar manejo en capas superiores
+            return Collections.emptyList();
+        }
     }
 }

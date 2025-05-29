@@ -7,6 +7,7 @@ import io.cryptotrade.api.service.CryptoCoinService;
 import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,40 +23,48 @@ public class CurrencyCryptoController {
     private final CurrencyService currencyService;
     private final CryptoCoinService cryptoCoinService;
 
-    // --- Monedas ---
-
     @GetMapping("/moneda")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Currency>> getAllCurrencies() {
         return ResponseEntity.ok(currencyService.findAll());
     }
 
-    @PostMapping("/moneda")
+    @PostMapping("/moneda/crear_nueva_moneda")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Currency> createCurrency(@Valid @RequestBody Currency currency) {
-        return ResponseEntity.ok(currencyService.createCurrency(currency));
+    public ResponseEntity<?> createCurrency(@Valid @RequestBody Currency currency) {
+        Currency currencyExists = currencyService.findBySymbolOrName(currency.getSymbol(), currency.getName());
+        if (currencyExists != null) {
+            // La moneda ya existe, devolver 409 Conflict con mensaje
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("La moneda con ese símbolo o nombre ya existe.");
+        } else {
+            Currency createdCurrency = currencyService.createCurrency(currency);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdCurrency);
+        }
     }
 
-    // --- Criptomonedas ---
 
     @GetMapping("/criptomoneda")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<CryptoCoin>> getCryptoCoins(@RequestParam(required = false) String moneda) {
-        if (moneda != null) {
+        if (moneda != null && !moneda.isBlank()) {
+
             return ResponseEntity.ok(cryptoCoinService.findByCurrencySymbol(moneda));
         }
         return ResponseEntity.ok(cryptoCoinService.findAll());
     }
 
-    @PostMapping("/criptomonedas")
+    @PostMapping("/criptomonedas/crear_criptomoneda")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<CryptoCoin> createCryptoCoin(@Valid @RequestBody CryptoCoinRequest request) {
+    public ResponseEntity<?> createCryptoCoin(@Valid @RequestBody CryptoCoinRequest coin) {
         CryptoCoin cryptoCoin = CryptoCoin.builder()
-                .name(request.getName())
-                .symbol(request.getSymbol())
-                .description(request.getDescription())
+                .name(coin.getName())
+                .symbol(coin.getSymbol())
+                .description(coin.getDescription())
                 .build();
-        return ResponseEntity.ok(cryptoCoinService.createCryptoCoin(cryptoCoin, request.getCurrencySymbols()));
+
+        CryptoCoin created = cryptoCoinService.createCryptoCoin(cryptoCoin, coin.getCurrencySymbols());
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/criptomonedas/{id}")

@@ -1,5 +1,6 @@
 package io.cryptotrade.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,7 +28,7 @@ public class CryptoCoin {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // Relación ManyToMany con Currency
+    // En CryptoCoin.java (lado propietario)
     @ManyToMany
     @JoinTable(
             name = "crypto_coin_currency",
@@ -35,10 +36,11 @@ public class CryptoCoin {
             joinColumns = @JoinColumn(name = "crypto_coin_id"),
             inverseJoinColumns = @JoinColumn(name = "currency_id")
     )
+    @JsonManagedReference
     private Set<Currency> currencies;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 }

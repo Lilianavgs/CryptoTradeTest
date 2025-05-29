@@ -1,5 +1,6 @@
 package io.cryptotrade.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,12 +28,12 @@ public class Currency {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // Relación bidireccional con CryptoCoin
     @ManyToMany(mappedBy = "currencies")
+    @JsonBackReference
     private Set<CryptoCoin> cryptoCoins;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 }
