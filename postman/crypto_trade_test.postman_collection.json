@@ -1,0 +1,223 @@
+{
+	"info": {
+		"_postman_id": "cabe0161-922f-4466-aefe-1fb1ce079529",
+		"name": "crypto_trade_test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "15451848"
+	},
+	"item": [
+		{
+			"name": "http://localhost:4668/auth/register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiYzJhYjMxZGMtZDIzNy00MzI3LWJmM2EtMmZhNWU4OTg3ZmVkIiwiaWF0IjoxNzQ4NDk2MTY0LCJleHAiOjE3NDg0OTk3NjR9.ohDiwOW4yoru_6SXlVBGg3kYfu6SVrhOSRz32q63Czk",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"usuario3@example.com\",\r\n  \"password\": \"tu_contraseña123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/auth/register"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/auth/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"usuario@example.com\",\r\n  \"password\": \"tu_contraseña123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/auth/logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiZjM1N2U2OTMtZDI1Yy00YThkLWI5NGYtOGE1Y2FkMTkwODY0IiwiaWF0IjoxNzQ4NTE1OTgxLCJleHAiOjE3NDg1MTk1ODF9.UQaX_m1QPjSJ3yEa-RO-uFrMEGuoPBy4AhdU30nUYMY"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/auth/logout"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/api/moneda",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiOWRmZGIwNDgtNjAxNS00ZDY4LTkxMzEtYzE5MDU3OTg5YWI0IiwiaWF0IjoxNzQ4NTI4ODI0LCJleHAiOjE3NDg1MzI0MjR9.oqGRL5vJSDOnOirsee0nse3V7mpMSz81cFY0nRGQ0tA"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/api/moneda"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/api/moneda/crear_nueva_moneda",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiOWRmZGIwNDgtNjAxNS00ZDY4LTkxMzEtYzE5MDU3OTg5YWI0IiwiaWF0IjoxNzQ4NTI4ODI0LCJleHAiOjE3NDg1MzI0MjR9.oqGRL5vJSDOnOirsee0nse3V7mpMSz81cFY0nRGQ0tA"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"symbol\": \"USD\",\r\n        \"name\": \"Dolar Americano\",\r\n        \"country\": \"UUEE\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/api/moneda/crear_nueva_moneda"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/api/criptomoneda",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiOWRmZGIwNDgtNjAxNS00ZDY4LTkxMzEtYzE5MDU3OTg5YWI0IiwiaWF0IjoxNzQ4NTI4ODI0LCJleHAiOjE3NDg1MzI0MjR9.oqGRL5vJSDOnOirsee0nse3V7mpMSz81cFY0nRGQ0tA"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"symbol\": \"MCC\",\r\n        \"name\": \"My Crypto Coin\",\r\n        \"description\": \"Cripto moneda de prueba1\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/api/criptomoneda"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/api/criptomonedas/crear_criptomoneda",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiOWRmZGIwNDgtNjAxNS00ZDY4LTkxMzEtYzE5MDU3OTg5YWI0IiwiaWF0IjoxNzQ4NTI4ODI0LCJleHAiOjE3NDg1MzI0MjR9.oqGRL5vJSDOnOirsee0nse3V7mpMSz81cFY0nRGQ0tA"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"symbol\": \"OBC\",\r\n  \"name\": \"Otro Bit Coin\",\r\n  \"description\": \"Cripto moneda OBT\",\r\n  \"currencySymbols\": [\"USD\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4668/api/criptomonedas/crear_criptomoneda"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4668/api/criptomoneda?moneda=USD",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2Vzc2lvbklkIjoiOWRmZGIwNDgtNjAxNS00ZDY4LTkxMzEtYzE5MDU3OTg5YWI0IiwiaWF0IjoxNzQ4NTI4ODI0LCJleHAiOjE3NDg1MzI0MjR9.oqGRL5vJSDOnOirsee0nse3V7mpMSz81cFY0nRGQ0tA"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"symbol\": \"MCC\",\r\n        \"name\": \"My Crypto Coin\",\r\n        \"description\": \"Cripto moneda de prueba1\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4668/api/criptomoneda?moneda=USD",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4668",
+					"path": [
+						"api",
+						"criptomoneda"
+					],
+					"query": [
+						{
+							"key": "moneda",
+							"value": "USD"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
