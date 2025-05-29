@@ -1,0 +1,108 @@
+<configuration>
+
+    <!-- Appender para consola -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender general para archivo -->
+    <appender name="FILE_GENERAL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/cryptotrade-app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/cryptotrade-app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender para logs de gestión de usuario (INFO y ERROR) -->
+    <appender name="FILE_AUTH_USER_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs_auth_user/auth_user-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs_auth_user/auth_user-info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_AUTH_USER_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs_auth_user/auth_user-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs_auth_user/auth_user-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender para logs de transacciones (INFO y ERROR) -->
+    <appender name="FILE_TRANSACTION_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs_transaction/transaction-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs_transaction/transaction-info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_TRANSACTION_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs_transaction/transaction-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs_transaction/transaction-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger para gestión de usuario -->
+    <logger name="io.cryptotrade.api.auth" level="INFO" additivity="false">
+        <appender-ref ref="FILE_AUTH_USER_INFO" />
+        <appender-ref ref="FILE_AUTH_USER_ERROR" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- Logger para transacciones -->
+    <logger name="io.cryptotrade.api.transaction" level="INFO" additivity="false">
+        <appender-ref ref="FILE_TRANSACTION_INFO" />
+        <appender-ref ref="FILE_TRANSACTION_ERROR" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- Logger raíz general -->
+    <root level="INFO">
+        <appender-ref ref="FILE_GENERAL" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
