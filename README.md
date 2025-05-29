@@ -1,0 +1,2 @@
+# CryptoTradeTest
+Cryptocurrency exchange platform
