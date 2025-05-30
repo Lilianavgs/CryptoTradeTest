@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -63,9 +64,13 @@ public class CurrencyCryptoController {
                 .description(coin.getDescription())
                 .build();
 
-        CryptoCoin created = cryptoCoinService.createCryptoCoin(cryptoCoin, coin.getCurrencySymbols());
-        return ResponseEntity.ok(created);
+        Optional<String> error = cryptoCoinService.createCryptoCoin(cryptoCoin, coin.getCurrencySymbols());
+        if (error.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.get());
+        }
+        return ResponseEntity.ok(cryptoCoin);
     }
+
 
     @PutMapping("/criptomonedas/{id}")
     @PreAuthorize("isAuthenticated()")

@@ -36,4 +36,52 @@ public class Session {
         lastActivity = sessionStart;
         isActive = true;
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Instant getSessionStart() {
+        return sessionStart;
+    }
+
+    public void setSessionStart(Instant sessionStart) {
+        this.sessionStart = sessionStart;
+    }
+
+    public Instant getLastActivity() {
+        return lastActivity;
+    }
+
+    public void setLastActivity(Instant lastActivity) {
+        this.lastActivity = lastActivity;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 }

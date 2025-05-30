@@ -1,6 +1,8 @@
 package io.cryptotrade.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +11,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "crypto_coin", schema = "currencies")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CryptoCoin {
 
     @Id
@@ -28,7 +32,6 @@ public class CryptoCoin {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // En CryptoCoin.java (lado propietario)
     @ManyToMany
     @JoinTable(
             name = "crypto_coin_currency",
@@ -36,7 +39,6 @@ public class CryptoCoin {
             joinColumns = @JoinColumn(name = "crypto_coin_id"),
             inverseJoinColumns = @JoinColumn(name = "currency_id")
     )
-    @JsonManagedReference
     private Set<Currency> currencies;
 
     @PrePersist

@@ -1,14 +1,12 @@
 package io.cryptotrade.api.service;
 
 import io.cryptotrade.api.model.Session;
-import io.cryptotrade.api.repository.SessionRepository;
+import io.cryptotrade.api.repository.transactional.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
