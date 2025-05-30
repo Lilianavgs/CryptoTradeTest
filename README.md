@@ -321,14 +321,15 @@ A continuación se describen los principales endpoints disponibles, su método H
 ## 🗂️ Estructura de paquetes recomendada
 Para mantener el proyecto organizado, escalable y fácil de mantener, se estructuro en los paquetes siguiendo una arquitectura por capas, separando claramente responsabilidades:
 io.cryptotrade
-├── config          // Configuraciones de Spring, seguridad y beans
-├── controller      // Controladores REST que exponen los endpoints
-├── model           // Entidades JPA que representan las tablas de la base de datos
-├── repository      // Repositorios JPA para acceso a datos
-├── security        // Clases relacionadas con JWT, filtros de seguridad y servicios de autenticación
-├── service         // Lógica de negocio y manejo de transacciones
-
-
+├── config               // Configuraciones de Spring, seguridad y beans
+├── controller           // Controladores REST que exponen los endpoints
+├── model                // Entidades JPA que representan las tablas de la base de datos
+├── repository           // Repositorios JPA
+├     ├── history        // Repositorios JPA para replicación
+│     └── transactional  // Repositorios JPA para transaccionalidad
+├── scheduler            // Configuración de las tareas
+├── security             // Clases relacionadas con JWT, filtros de seguridad y servicios de autenticación
+├── service              // Lógica de negocio y manejo de transacciones
 
 ## 🗂️ Esquema básico de la base de datos
 
@@ -400,6 +401,36 @@ Las contribuciones son bienvenidas. Por favor abre un issue o pull request para 
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia MIT.
+
+
+### Tecnologías utilizadas
+
+- [Indicar tecnologías, frameworks o librerías relevantes, por ejemplo:]
+  - Spring Boot
+  - Base de datos PostgreSQL
+
+# Microservicio de Replicación de Datos
+
+Este microservicio se encarga de la replicación de datos para mantener sincronizada la base de datos histórica del sistema.
+
+### Base de Datos
+
+- **Nombre:** `crypto_trade_history`
+- **Descripción:** Esta base de datos almacena el histórico completo de transacciones realizadas en la plataforma CryptoTrade, permitiendo auditorías, análisis y reportes.
+-  Es copia fiel de la BD crypto_trade_db
+
+### Funcionalidades principales
+
+- Replicación continua y confiable de datos desde la base de datos principal hacia `crypto_trade_history`.
+- Manejo de conflictos y consistencia de datos durante la replicación.
+- Soporte para escalabilidad y alta disponibilidad.
+- Registro detallado de eventos y errores para monitoreo.
+
+### Cómo ejecutar el microservicio
+
+1. Configura las variables de entorno necesarias (conexión a bases de datos, credenciales, etc.).
+2. Ejecuta el servicio de forma automática desde una tarea programada en los archivos de la aplicación 
+
 
 ---
 *¡Gracias por usar CryptoTrade API!*

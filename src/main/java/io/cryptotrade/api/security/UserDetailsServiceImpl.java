@@ -1,12 +1,11 @@
 package io.cryptotrade.api.security;
 
 import io.cryptotrade.api.model.User;
-import io.cryptotrade.api.repository.UserRepository;
+import io.cryptotrade.api.repository.transactional.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

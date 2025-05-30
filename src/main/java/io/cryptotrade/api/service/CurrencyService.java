@@ -1,8 +1,7 @@
 package io.cryptotrade.api.service;
 
 import io.cryptotrade.api.model.Currency;
-import io.cryptotrade.api.model.Session;
-import io.cryptotrade.api.repository.CurrencyRepository;
+import io.cryptotrade.api.repository.transactional.CurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

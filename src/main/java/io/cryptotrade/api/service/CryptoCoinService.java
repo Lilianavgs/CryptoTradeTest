@@ -2,13 +2,14 @@ package io.cryptotrade.api.service;
 
 import io.cryptotrade.api.model.CryptoCoin;
 import io.cryptotrade.api.model.Currency;
-import io.cryptotrade.api.repository.CryptoCoinRepository;
+import io.cryptotrade.api.repository.transactional.CryptoCoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,10 +34,18 @@ public class CryptoCoinService {
         return cryptoCoins;
     }
 
-    public CryptoCoin createCryptoCoin(CryptoCoin cryptoCoin, Set<String> currencySymbols) {
+    public Optional<String> createCryptoCoin(CryptoCoin cryptoCoin, Set<String> currencySymbols) {
+        Set<String> notFound = currencySymbols.stream()
+                .filter(symbol -> currencyService.findBySymbol(symbol) == null)
+                .collect(Collectors.toSet());
+
+        if (!notFound.isEmpty()) {
+            transactionLogger.info("La moneda con el simbolo {} no existe", notFound);
+            return Optional.of("La moneda con el simbolo " + notFound + " no existe");
+        }
+
         Set<Currency> currencies = currencySymbols.stream()
                 .map(currencyService::findBySymbol)
-                .filter(c -> c != null)
                 .collect(Collectors.toSet());
 
         cryptoCoin.setCurrencies(currencies);
@@ -48,8 +57,9 @@ public class CryptoCoinService {
                 savedCryptoCoin.getName(),
                 currencies.stream().map(Currency::getSymbol).toList());
 
-        return savedCryptoCoin;
+        return Optional.empty();
     }
+
 
     public CryptoCoin updateCryptoCoin(Integer id, CryptoCoin updatedCryptoCoin) {
         return cryptoCoinRepository.findById(id).map(cryptoCoin -> {

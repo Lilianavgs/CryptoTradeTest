@@ -2,7 +2,7 @@ package io.cryptotrade.api.service;
 
 
 import io.cryptotrade.api.model.User;
-import io.cryptotrade.api.repository.UserRepository;
+import io.cryptotrade.api.repository.transactional.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
